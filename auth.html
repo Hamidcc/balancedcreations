@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Sign In &mdash; ClipCraft</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="auth-bg"></div>
+<div class="auth-glow"></div>
+
+<div class="auth-page">
+  <a href="/index.html" class="auth-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to ClipCraft
+  </a>
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="/logo.png" alt="ClipCraft" class="auth-logo-img"
+           onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
+      <div id="logoFallback" style="display:none;width:30px;height:30px;background:var(--accent);border-radius:7px;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:700;font-size:14px;color:#fff">CC</div>
+      <span class="auth-logo-text">ClipCraft</span>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab on" id="tabLogin"    onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab"   id="tabRegister"  onclick="switchTab('register')">Create Account</div>
+    </div>
+
+    <!-- ── LOGIN ── -->
+    <div id="loginForm" class="auth-form">
+      <div id="loginErr" class="auth-err"></div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="inp-wrap">
+          <input type="password" id="loginPw" class="form-input" placeholder="Your password" autocomplete="current-password">
+          <span class="inp-act" onclick="togglePw('loginPw',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <a style="font-size:13px;color:var(--accent);cursor:pointer;display:block;text-align:right;margin-top:-8px;margin-bottom:14px" onclick="switchTab('forgot')">Forgot password?</a>
+
+      <div class="recaptcha-wrap">
+        <div id="loginCaptcha"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%" id="loginBtn" onclick="doLogin()">
+        <span id="loginBtnTxt">Sign In</span>
+      </button>
+    </div>
+
+    <!-- ── REGISTER ── -->
+    <div id="registerForm" class="auth-form" style="display:none">
+      <div id="registerErr" class="auth-err"></div>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" id="regUser" class="form-input" placeholder="steve_builder" maxlength="24" autocomplete="off" oninput="checkUser(this)">
+        <span class="form-hint" id="userHint">Letters, numbers, underscores &mdash; 3 to 24 characters</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="inp-wrap">
+          <input type="password" id="regPw" class="form-input" placeholder="Create a strong password" maxlength="64" autocomplete="new-password" oninput="checkPw(this.value)">
+          <span class="inp-act" onclick="togglePw('regPw',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+        </div>
+        <div class="pw-bars">
+          <div class="pw-bar" id="b1"></div><div class="pw-bar" id="b2"></div>
+          <div class="pw-bar" id="b3"></div><div class="pw-bar" id="b4"></div>
+          <div class="pw-bar" id="b5"></div>
+        </div>
+        <div class="pw-reqs">
+          <span class="req" id="r1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 6&ndash;64 chars</span>
+          <span class="req" id="r2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Uppercase</span>
+          <span class="req" id="r3"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Lowercase</span>
+          <span class="req" id="r4"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Number</span>
+          <span class="req" id="r5"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Special char</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Confirm password</label>
+        <div class="inp-wrap">
+          <input type="password" id="regConfirm" class="form-input" placeholder="Repeat your password" maxlength="64" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="recaptcha-wrap">
+        <div id="registerCaptcha"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%" id="registerBtn" onclick="doRegister()">
+        <span id="registerBtnTxt">Create Account</span>
+      </button>
+
+      <p class="auth-foot" style="margin-top:13px">
+        By signing up you agree to our
+        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- ── FORGOT ── -->
+    <div id="forgotForm" class="auth-form" style="display:none">
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">
+        Enter your email address and we will send you a link to reset your password.
+      </p>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="forgotEmail" class="form-input" placeholder="you@example.com">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="doReset()">Send Reset Link</button>
+      <button class="btn btn-ghost"   style="width:100%"                     onclick="switchTab('login')">Back to Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- reCAPTCHA — onload callback must be in a non-module script -->
+<script>
+var _loginCapId = null;
+var _registerCapId = null;
+
+function initCaptcha() {
+  if (!window.hcaptcha) {
+    setTimeout(initCaptcha, 200);
+    return;
+  }
+
+  var theme = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+
+  _loginCapId = hcaptcha.render("loginCaptcha", {
+    sitekey: "d8c656ae-b7fc-4db6-b364-827e84ca9b10",
+    theme: theme,
+  });
+
+  _registerCapId = hcaptcha.render("registerCaptcha", {
+    sitekey: "d8c656ae-b7fc-4db6-b364-827e84ca9b10",
+    theme: theme,
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initCaptcha);
+
+  // ── Tab switching ────────────────────────────────────
+  window.switchTab = function (tab) {
+    document.getElementById("loginForm").style.display    = tab === "login"    ? "" : "none";
+    document.getElementById("registerForm").style.display = tab === "register" ? "" : "none";
+    document.getElementById("forgotForm").style.display   = tab === "forgot"   ? "" : "none";
+    document.getElementById("tabLogin").classList.toggle("on",    tab === "login");
+    document.getElementById("tabRegister").classList.toggle("on", tab === "register");
+  };
+
+  // ── Toggle password visibility ───────────────────────
+  window.togglePw = function (id, btn) {
+    var inp = document.getElementById(id);
+    var isText = inp.type === "text";
+    inp.type = isText ? "password" : "text";
+    btn.style.color = isText ? "" : "var(--accent)";
+  };
+
+  // ── Password strength live feedback ─────────────────
+  window.checkPw = function (pw) {
+    var len  = pw.length >= 6 && pw.length <= 64;
+    var up   = /[A-Z]/.test(pw);
+    var lo   = /[a-z]/.test(pw);
+    var num  = /[0-9]/.test(pw);
+    var sp   = /[^A-Za-z0-9]/.test(pw);
+    var str  = [len, up, lo, num, sp].filter(Boolean).length;
+    var cls  = str <= 2 ? "w" : str <= 4 ? "m" : "s";
+    ["b1","b2","b3","b4","b5"].forEach(function (b, i) {
+      document.getElementById(b).className = "pw-bar" + (i < str ? " " + cls : "");
+    });
+    setReq("r1", len); setReq("r2", up); setReq("r3", lo); setReq("r4", num); setReq("r5", sp);
+  };
+
+  function setReq(id, ok) {
+    document.getElementById(id).className = "req" + (ok ? " ok" : "");
+  }
+
+  // ── Username availability debounce ───────────────────
+  var _uTimeout;
+  window.checkUser = function (inp) {
+    inp.value = inp.value.replace(/[^a-zA-Z0-9_]/g, "");
+    clearTimeout(_uTimeout);
+    var val = inp.value;
+    var hint = document.getElementById("userHint");
+    if (val.length < 3) { hint.textContent = "Minimum 3 characters"; hint.style.color = ""; return; }
+    hint.textContent = "Checking availability\u2026";
+    _uTimeout = setTimeout(function () {
+      import("/js/auth.js").then(function (m) {
+        m.isUsernameAvailable(val.toLowerCase()).then(function (ok) {
+          hint.textContent = ok ? "\u2713 Username available" : "\u2715 Username taken";
+          hint.style.color = ok ? "#2c5" : "var(--accent)";
+        });
+      });
+    }, 600);
+  };
+
+  // ── Helper: show error ───────────────────────────────
+  function showErr(id, msg) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function hideErr(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  function setBusy(btnId, txtId, busy) {
+    var btn = document.getElementById(btnId);
+    var txt = document.getElementById(txtId);
+    btn.disabled = busy;
+    txt.innerHTML = busy ? '<span class="spinner"></span>' : txt.dataset.label || txt.textContent;
+    if (!busy && txt.dataset.label) txt.textContent = txt.dataset.label;
+  }
+
+  // ── Login ────────────────────────────────────────────
+  window.doLogin = function () {
+    var email = document.getElementById("loginEmail").value;
+    var pw    = document.getElementById("loginPw").value;
+    hideErr("loginErr");
+
+    if (!email || !pw) { showErr("loginErr", "Please fill in all fields."); return; }
+    if (_loginCapId === null) { showErr("loginErr", "Captcha is not ready yet, please wait."); return; }
+
+    var token = hcaptcha.getResponse(_loginCapId);
+    if (!token) { showErr("loginErr", "Hold up. Are you a human? Please complete the captcha"); return; }
+
+    setBusy("loginBtn", "loginBtnTxt", true);
+    document.getElementById("loginBtnTxt").dataset.label = "Sign In";
+
+    import("/js/auth.js").then(function (m) {
+      import("/js/config.js").then(function (cfg) {
+        m.loginUser({ email: email, password: pw, captchaToken: token })
+          .then(function () {
+            cfg.toast("Welcome back!", "ok");
+            var redir = new URLSearchParams(location.search).get("redirect") || "/index.html";
+            setTimeout(function () { location.href = redir; }, 600);
+          })
+          .catch(function (e) {
+            showErr("loginErr", m.friendlyError(e.code) || e.message);
+            hcaptcha.reset(_loginCapId);
+            setBusy("loginBtn", "loginBtnTxt", false);
+          });
+      });
+    });
+  };
+
+  // ── Register ─────────────────────────────────────────
+  window.doRegister = function () {
+    var username = document.getElementById("regUser").value;
+    var email    = document.getElementById("regEmail").value;
+    var pw       = document.getElementById("regPw").value;
+    var confirm  = document.getElementById("regConfirm").value;
+    hideErr("registerErr");
+
+    if (!username || !email || !pw || !confirm) { showErr("registerErr", "Please fill in all fields."); return; }
+    if (pw !== confirm) { showErr("registerErr", "Passwords do not match."); return; }
+    if (_registerCapId === null) { showErr("registerErr", "Captcha is not ready yet, please wait."); return; }
+
+    var token = hcaptcha.getResponse(_registerCapId);
+    if (!token) { showErr("registerErr", "Hold up. Are you a human? Please complete the captcha"); return; }
+
+    setBusy("registerBtn", "registerBtnTxt", true);
+    document.getElementById("registerBtnTxt").dataset.label = "Create Account";
+
+    import("/js/auth.js").then(function (m) {
+      import("/js/config.js").then(function (cfg) {
+        m.registerUser({ username: username, email: email, password: pw, captchaToken: token })
+          .then(function () {
+            cfg.toast("Account created! Check your email to verify.", "ok", 5000);
+            var redir = new URLSearchParams(location.search).get("redirect") || "/index.html";
+            setTimeout(function () { location.href = redir; }, 1200);
+          })
+          .catch(function (e) {
+            showErr("registerErr", m.friendlyError(e.code) || e.message);
+            hcaptcha.reset(_registerCapId);
+            setBusy("registerBtn", "registerBtnTxt", false);
+          });
+      });
+    });
+  };
+
+  // ── Password reset ───────────────────────────────────
+  window.doReset = function () {
+    var email = document.getElementById("forgotEmail").value;
+    if (!email) { return; }
+    import("/js/auth.js").then(function (m) {
+      import("/js/config.js").then(function (cfg) {
+        m.sendReset(email)
+          .then(function () {
+            cfg.toast("Reset link sent! Check your inbox.", "ok");
+            switchTab("login");
+          })
+          .catch(function (e) {
+            cfg.toast(m.friendlyError(e.code) || e.message, "err");
+          });
+      });
+    });
+  };
+
+  // ── Enter key shortcuts ───────────────────────────────
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    var lf = document.getElementById("loginForm");
+    var rf = document.getElementById("registerForm");
+    var ff = document.getElementById("forgotForm");
+    if (lf.style.display !== "none") doLogin();
+    else if (rf.style.display !== "none") doRegister();
+    else if (ff.style.display !== "none") doReset();
+  });
+
+  // ── Theme init (non-module so runs synchronously) ─────
+  (function () {
+    var t = localStorage.getItem("cc-theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+<!-- Register service worker -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(function () {});
+  }
+</script>
+</body>
+</html>
